@@ -1,0 +1,341 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .wrap {
+    background: #ede4ce;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    font-family: 'Noto Serif KR', Georgia, serif;
+  }
+  .book { width: 100%; max-width: 380px; position: relative; }
+  .counter {
+    text-align: center; font-size: 9px; letter-spacing: 0.3em;
+    color: #8b1a1a; margin-bottom: 0.75rem;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .page {
+    background: #f5edd8; border: 0.5px solid #c4b49a;
+    min-height: 480px; position: relative;
+    display: none; flex-direction: column;
+    box-shadow: 3px 3px 0 #d4c8a8, 6px 6px 0 #c4b49a; overflow: hidden;
+  }
+  .page.active { display: flex; }
+
+  /* 표지 */
+  .cover-header {
+    background: #8b1a1a; padding: 0.6rem 1.25rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .cover-header-text {
+    font-size: 7px; color: #f5edd8; letter-spacing: 0.12em;
+    font-family: 'Noto Sans KR', sans-serif; line-height: 1.7;
+  }
+  .cover-body {
+    padding: 1.5rem 2rem; display: flex;
+    flex-direction: column; align-items: center; flex: 1;
+  }
+  .cover-title {
+    font-size: 22px; font-weight: 700; color: #8b1a1a;
+    letter-spacing: 0.15em; text-align: center;
+    font-family: 'Noto Serif KR', serif; margin-bottom: 0.25rem;
+  }
+  .cover-subtitle {
+    font-size: 11px; color: #5a3a1a; letter-spacing: 0.2em;
+    text-align: center; margin-bottom: 1.5rem;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .cover-divider { width: 100%; height: 0.5px; background: #c4b49a; margin: 0.75rem 0; }
+  .cover-meta {
+    width: 100%; font-size: 11px; color: #3a2a1a;
+    line-height: 2.1; font-family: 'Noto Sans KR', sans-serif;
+  }
+  .cover-meta span { color: #8b1a1a; font-weight: 700; }
+  .cover-stamp-row {
+    margin-top: auto; width: 100%;
+    display: flex; justify-content: space-between; align-items: flex-end; padding-top: 1rem;
+  }
+  .stamp-red {
+    border: 2px solid #8b1a1a; padding: 5px 14px;
+    font-size: 9px; letter-spacing: 0.2em; color: #8b1a1a;
+    font-weight: 700; transform: rotate(-4deg); opacity: 0.75;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .doc-num { font-size: 9px; color: #a09080; letter-spacing: 0.15em; font-family: 'Noto Sans KR', sans-serif; }
+
+  /* 일반 페이지 */
+  .page-top { background: #8b1a1a; height: 4px; }
+  .page-inner { padding: 1.5rem 1.75rem; flex: 1; display: flex; flex-direction: column; }
+  .page-label {
+    font-size: 8px; letter-spacing: 0.3em; color: #8b1a1a;
+    text-transform: uppercase; margin-bottom: 1.25rem;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .section-title {
+    font-size: 9px; letter-spacing: 0.2em; color: #8b1a1a;
+    font-weight: 700; margin-bottom: 0.5rem;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .section { margin-bottom: 1.25rem; }
+  .body-text { font-size: 12px; color: #3a2a1a; line-height: 1.9; font-family: 'Noto Sans KR', sans-serif; }
+  .bold-red { color: #8b1a1a; font-weight: 700; }
+  .divider { display: flex; align-items: center; gap: 0.75rem; margin: 1rem 0; }
+  .divider-line { flex: 1; height: 0.5px; background: #c4b49a; }
+  .divider-icon { font-size: 11px; color: #8b1a1a; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag {
+    background: #e8dcc8; border: 0.5px solid #c4b49a; color: #3a2a1a;
+    font-size: 10px; padding: 3px 9px; border-radius: 1px;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .tag.hl { background: #8b1a1a; border-color: #8b1a1a; color: #f5edd8; font-weight: 700; }
+  .page-footer {
+    margin-top: auto; padding-top: 0.75rem; border-top: 0.5px solid #c4b49a;
+    display: flex; justify-content: space-between;
+    font-size: 9px; color: #a09080; letter-spacing: 0.1em;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  .link-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 0.6rem 0; border-bottom: 0.5px solid #e0d4ba; text-decoration: none;
+  }
+  .link-icon {
+    width: 28px; height: 28px; background: #8b1a1a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #f5edd8; border-radius: 1px;
+    font-family: 'Noto Sans KR', sans-serif; font-weight: 700; flex-shrink: 0;
+  }
+  .link-text { font-size: 12px; color: #3a2a1a; font-family: 'Noto Sans KR', sans-serif; }
+  .link-sub { font-size: 10px; color: #a09080; font-family: 'Noto Sans KR', sans-serif; }
+  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; }
+  .nav-btn {
+    background: transparent; border: 0.5px solid #c4b49a; color: #8b1a1a;
+    font-size: 11px; padding: 6px 16px; cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif; letter-spacing: 0.05em;
+    border-radius: 1px; transition: background 0.15s;
+  }
+  .nav-btn:hover { background: #e8dcc8; }
+  .nav-btn:disabled { color: #c4b49a; border-color: #ddd4c0; cursor: default; background: transparent; }
+  .dot-row { display: flex; gap: 6px; align-items: center; }
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: #c4b49a; cursor: pointer; transition: background 0.15s; }
+  .dot.active { background: #8b1a1a; }
+</style>
+
+<div class="wrap">
+  <div class="book">
+    <p class="counter" id="counter">PAGE 1 / 5</p>
+
+    <!-- PAGE 1: 표지 -->
+    <div class="page active" id="page-0">
+      <div class="cover-header">
+        <div class="cover-header-text">СОВЕРШЕННО<br>СЕКРЕТНО<br>СССР</div>
+        <svg width="34" height="34" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="#f5edd8" stroke-width="1.5"/>
+          <text x="50" y="62" text-anchor="middle" font-size="36" fill="#f5edd8">☭</text>
+        </svg>
+        <div class="cover-header-text" style="text-align:right;">ХРАНИТЬ<br>ВЕЧНО<br>КГБ</div>
+      </div>
+      <div class="cover-body">
+        <!-- 별 + 낫망치 SVG -->
+        <svg width="76" height="76" viewBox="0 0 100 100" style="margin: 0.5rem 0 1rem;">
+          <polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35"
+            fill="#8b1a1a" stroke="#c4a060" stroke-width="1.5"/>
+          <text x="50" y="62" text-anchor="middle" font-size="32" fill="#f5edd8">☭</text>
+        </svg>
+        <p class="cover-title">ЛИЧНОЕ ДЕЛО</p>
+        <p class="cover-subtitle">개인 파일 — 열람 제한</p>
+        <div class="cover-divider"></div>
+        <div class="cover-meta">
+          <div><span>대상자:</span> Mama_Stiletto (전분)</div>
+          <div><span>식별코드:</span> @JeonbunDream</div>
+          <div><span>소속:</span> Советский Союз</div>
+          <div><span>분류:</span> 성인 / 팬 계정</div>
+          <div><span>작성일:</span> 2026년 4월</div>
+        </div>
+        <div class="cover-stamp-row">
+          <div class="stamp-red">열람 주의</div>
+          <div class="doc-num">№ 137 / JD</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: 자기소개 -->
+    <div class="page" id="page-1">
+      <div class="page-top"></div>
+      <div class="page-inner">
+        <p class="page-label">☭ 보고서 — 대상자 소개</p>
+        <div class="section">
+          <p class="section-title">I. 기본 정보</p>
+          <p class="body-text"><span class="bold-red">호칭:</span> 전분 / @JeonbunDream<br>편하게 전분이라고 읽어주시면 됩니다.</p>
+        </div>
+        <div class="section">
+          <p class="section-title">II. 계정 성격</p>
+          <p class="body-text">본 계정은 드림계이나 일상 트윗 및 잡다한 트윗이 다수 포함됨. RT 빈도 높음. 열람 시 주의 요망.</p>
+        </div>
+        <div class="section">
+          <p class="section-title">III. 취향 성향 분석</p>
+          <p class="body-text">2D·3D 무구분 소비. 실존인물 덕질 트윗 및 본인 포함 실제 인물 사진 게시 빈도 있음. 남성향·빻취·이상성욕 등 비주류 소재 거부반응 없음.</p>
+        </div>
+        <div class="section">
+          <p class="section-title">IV. 특이사항</p>
+          <p class="body-text">파는 장르 특성상 소비에트 연방 및 사회주의·공산주의 관련 트윗 다수. 미혐·일혐 트윗 돌발 게시 가능성 있음.</p>
+        </div>
+        <div class="page-footer">
+          <span>Советский Союз</span><span>SINCE 2022</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: 지뢰 -->
+    <div class="page" id="page-2">
+      <div class="page-top"></div>
+      <div class="page-inner">
+        <p class="page-label">☭ KGB 심의 보고서 — 숙청 대상 목록</p>
+        <div class="section">
+          <p class="section-title">I. 사상 검열</p>
+          <p class="body-text">차별적 언행·혐오 표현·사회적 무례함 전반을 반혁명적 행위로 규정함. 장애 비하·성소수자 혐오 등 기본적 예의를 벗어나는 일체의 언행 포함.</p>
+        </div>
+        <div class="divider"><div class="divider-line"></div><span class="divider-icon">☭</span><div class="divider-line"></div></div>
+        <div class="section">
+          <p class="section-title">II. 숙청 대상 장르</p>
+          <div class="tag-row">
+            <span class="tag hl">호요버스 전체</span>
+            <span class="tag hl">프로젝트 문 전체</span>
+            <span class="tag hl">주술회전</span>
+            <span class="tag hl">마슐</span>
+            <span class="tag hl">최애의 아이</span>
+            <span class="tag hl">펠월드</span>
+            <span class="tag hl">빵빵이의 일상</span>
+            <span class="tag hl">사우스 코리안 파크</span>
+            <span class="tag hl">우익·표절·혐오 논란 작품 전체</span>
+          </div>
+        </div>
+        <div class="divider"><div class="divider-line"></div><span class="divider-icon">☭</span><div class="divider-line"></div></div>
+        <div class="section">
+          <p class="section-title">III. 소재 관련</p>
+          <p class="body-text">소재 숙청 대상은 거의 없음. 단, 상기 목록 내 작품 소재는 예외 없이 적용됨.</p>
+        </div>
+        <p class="body-text" style="font-size:10px; color:#a09080; margin-top:auto;">※ 상기 목록은 인민위원회 최종 승인 사항임. 이의 제기 불가.</p>
+        <div class="page-footer">
+          <span>Советский Союз</span><span>SINCE 2022</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 4: 장르 및 드림 -->
+    <div class="page" id="page-3">
+      <div class="page-top"></div>
+      <div class="page-inner">
+        <p class="page-label">☭ 보고서 — 장르 및 드림</p>
+        <div class="section">
+          <p class="section-title">I. 주력 장르</p>
+          <div class="tag-row">
+            <span class="tag hl">소련</span>
+            <span class="tag hl">알렉산드로프 앙상블</span>
+            <span class="tag hl">유리 가가린</span>
+            <span class="tag hl">콜 오브 듀티</span>
+            <span class="tag hl">자작 캐릭터(OC)</span>
+            <span class="tag hl">자캐 커플</span>
+          </div>
+        </div>
+        <div class="divider"><div class="divider-line"></div><span class="divider-icon">☭</span><div class="divider-line"></div></div>
+        <div class="section">
+          <p class="section-title">II. 드림 목록</p>
+          <p class="body-text">
+            <span class="bold-red">콜 오브 듀티</span><br>
+            스틸레토 · 파크 · 송 · 맥시스 연인 드림
+          </p>
+        </div>
+        <div class="divider"><div class="divider-line"></div><span class="divider-icon">☭</span><div class="divider-line"></div></div>
+        <div class="section">
+          <p class="section-title">III. 보유 타이틀</p>
+          <div class="tag-row">
+            <span class="tag">CoD 1</span>
+            <span class="tag">CoD 2</span>
+            <span class="tag">월드 앳 워</span>
+            <span class="tag">모던 워페어 II</span>
+            <span class="tag">모던 워페어 III</span>
+            <span class="tag">블랙옵스 콜드 워</span>
+            <span class="tag">블랙옵스 6</span>
+          </div>
+        </div>
+        <p class="body-text" style="font-size:10px; color:#a09080; margin-top:auto;">※ 상기 외 다양한 장르 간헐적 언급 있음.</p>
+        <div class="page-footer">
+          <span>Советский Союз</span><span>SINCE 2022</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 5: 링크 모음 -->
+    <div class="page" id="page-4">
+      <div class="page-top"></div>
+      <div class="page-inner">
+        <p class="page-label">☭ 보고서 — 관련 문서 접근 경로</p>
+        
+        <a class="link-item" href="https://pushoong.com/ask/9674228732/" target="_blank">
+          <div class="link-icon">ASK</div>
+          <div><p class="link-text">에스크</p><p class="link-sub">질문함</p></div>
+        </a>
+        
+        <a class="link-item" href="https://www.notion.so/1fa2de8cfdaf80bdaf63de4ea551a444" target="_blank">
+          <div class="link-icon">NO</div>
+          <div><p class="link-text">노션</p><p class="link-sub">드림주 설정 보관소 (업로드 예정)</p></div>
+        </a>
+        
+        <a class="link-item" href="https://jeonbun-dream.tistory.com/" target="_blank">
+          <div class="link-icon">TI</div>
+          <div><p class="link-text">티스토리</p><p class="link-sub">구 드림주 설정 보관소</p></div>
+        </a>
+        
+        <a class="link-item" href="https://x.com/JeonbunD4C" target="_blank">
+          <div class="link-icon">비계</div>
+          <div><p class="link-text">서브 계정</p><p class="link-sub">비공개</p></div>
+        </a>
+        
+        <p class="body-text" style="font-size:10px; color:#a09080; margin-top:auto;">※ 링크 접근 전 신원 확인 요망.</p>
+        <div class="page-footer">
+          <span>Советский Союз</span><span>SINCE 2022</span>
+        </div>
+      </div>
+    </div> <div class="nav-row">
+      <button class="nav-btn" id="prev-btn" onclick="changePage(-1)" disabled>← 이전</button>
+      <div class="dot-row" id="dots"></div>
+      <button class="nav-btn" id="next-btn" onclick="changePage(1)">다음 →</button>
+    </div>
+  </div> </div> ```
+
+<script>
+  let cur = 0;
+  const total = 5;
+  const dotsEl = document.getElementById('dots');
+  let startX = 0;
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  }
+  function goTo(n) {
+    document.getElementById('page-' + cur).classList.remove('active');
+    document.querySelectorAll('.dot')[cur].classList.remove('active');
+    cur = n;
+    document.getElementById('page-' + cur).classList.add('active');
+    document.querySelectorAll('.dot')[cur].classList.add('active');
+    document.getElementById('counter').textContent = 'PAGE ' + (cur + 1) + ' / ' + total;
+    document.getElementById('prev-btn').disabled = cur === 0;
+    document.getElementById('next-btn').disabled = cur === total - 1;
+  }
+  function changePage(dir) {
+    const next = cur + dir;
+    if (next >= 0 && next < total) goTo(next);
+  }
+  document.querySelector('.book').addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+  document.querySelector('.book').addEventListener('touchend', e => {
+    const diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) changePage(diff > 0 ? 1 : -1);
+  });
+</script>
